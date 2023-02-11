@@ -31,3 +31,10 @@ class YTubeVideoMeta(DBBase, YTubeBase):
         query = query.order_by(desc(cls.created_at)).limit(paginator.page_size).offset(
             paginator.page_size * paginator.page)
         return [obj.__to_model() for obj in query.all()]
+
+    @classmethod
+    def insert_all(cls, items: List[YTubeVideoMetaModel]):
+        from controller.context_manager import get_db_session
+        db: Session = get_db_session()
+        db.bulk_save_objects([obj.build_db_model() for obj in items])
+        db.flush()

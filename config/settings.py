@@ -19,3 +19,14 @@ class DB:
     name = Environment.get_string("DB_NAME", "test")
     user = Environment.get_string("DB_USER", "")
     pass_ = Environment.get_string("DB_PASS", "")
+
+
+class GoogleIntegration:
+    api_key = Environment.get_string("GOOGLE_API_KEY", "")
+    videos_search_base_url = Environment.get_string("GOOGLE_VIDEOS_SEARCH_BASE_URL",
+                                                    "https://www.googleapis.com/youtube/v3/search")
+    max_results = Environment.get_int("GOOGLE_RESPONSE_MAX_RESULTS", 20)
+    order = Environment.get_string("GOOGLE_REQUEST_ORDER", "date")
+    type = Environment.get_string("GOOGLE_REQUEST_TYPE", "video")
+    part = Environment.get_string("GOOGLE_REQUEST_PART", "snippet")
+    query = Environment.get_string("GOOGLE_REQUEST_QUERY", "sports")

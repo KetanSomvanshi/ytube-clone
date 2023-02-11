@@ -1,4 +1,5 @@
 import logging
+import sys
 
 
 def get_logger(name, level=logging.DEBUG) -> logging.Logger:
@@ -8,6 +9,10 @@ def get_logger(name, level=logging.DEBUG) -> logging.Logger:
     logging.basicConfig(format=FORMAT, datefmt=TIME_FORMAT, level=level, filename=FILENAME)
 
     logger_instance = logging.getLogger(name)
+
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setLevel(level)
+    logger_instance.addHandler(handler)
     return logger_instance
 
 
