@@ -49,4 +49,4 @@ def remove_db_session(rollback=False):
         db.rollback()
     else:
         db.commit()
-    db.remove()
+    db.close()
