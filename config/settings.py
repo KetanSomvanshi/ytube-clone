@@ -30,3 +30,4 @@ class GoogleIntegration:
     type = Environment.get_string("GOOGLE_REQUEST_TYPE", "video")
     part = Environment.get_string("GOOGLE_REQUEST_PART", "snippet")
     query = Environment.get_string("GOOGLE_REQUEST_QUERY", "sports")
+    published_after = Environment.get_string("GOOGLE_REQUEST_PUBLISHED_AFTER", "2021-02-01T00:00:00Z")

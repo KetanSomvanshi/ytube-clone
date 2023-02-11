@@ -9,6 +9,7 @@ from models.base import DBBaseModel, PaginationResponse
 
 
 class YTubeVideoInsertModel(BaseModel):
+    """Pydantic model for inserting a video"""
     title: str = None
     description: str = None
     thumbnails: Optional[dict] = None
@@ -35,15 +36,18 @@ class YTubeVideoInsertModel(BaseModel):
 
 
 class YTubeVideoMetaModel(DBBaseModel, YTubeVideoInsertModel):
+    """Pydantic equivalent model of orm model"""
     pass
 
 
 class YTubeGetResponseModel(BaseModel):
+    """Pydantic model for response of get request"""
     pagination_data: PaginationResponse
     data: List[YTubeVideoMetaModel]
 
 
 class GoogleApiParams(BaseModel):
+    """"Pydantic model for google youtube api request params"""
     key: str = None
     part: Optional[str] = 'snippet'
     maxResults: Optional[int] = 20

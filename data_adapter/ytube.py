@@ -19,8 +19,8 @@ class YTubeVideoMeta(DBBase, YTubeBase):
     channel_id = Column(String(255), nullable=True)
     channel_title = Column(String, nullable=True)
 
-    # converts db orm object to pydantic model
     def __to_model(self) -> YTubeVideoMetaModel:
+        """converts db orm object to pydantic model"""
         return YTubeVideoMetaModel.from_orm(self)
 
     @classmethod

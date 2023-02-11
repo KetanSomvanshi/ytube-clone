@@ -3,6 +3,7 @@ import sys
 
 
 def get_logger(name, level=logging.DEBUG) -> logging.Logger:
+    """"logging to logfile as well as on console"""
     FORMAT = "[%(levelname)s  %(name)s %(module)s:%(lineno)s - %(funcName)s() - %(asctime)s]\n\t %(message)s \n"
     TIME_FORMAT = "%d.%m.%Y %I:%M:%S %p"
     FILENAME = './log.log'
@@ -18,4 +19,4 @@ def get_logger(name, level=logging.DEBUG) -> logging.Logger:
 
 logger = get_logger(__name__)
 
-logger.info(f'Logger initiated')
+logger.info('Logger initiated')

@@ -10,10 +10,11 @@ class GoogleYoutubeIntegration:
 
     @staticmethod
     def sync_videos_meta_from_youtube() -> GenericResponseModel:
+        """ Sync videos metadata from youtube apis"""
         request_params = GoogleApiParams(key=GoogleIntegration.api_key, part=GoogleIntegration.part,
                                          order=GoogleIntegration.order,
                                          type=GoogleIntegration.type, max_results=GoogleIntegration.max_results,
-                                         q=GoogleIntegration.query, publishedAfter="2021-02-01T00:00:00Z")
+                                         q=GoogleIntegration.query, publishedAfter=GoogleIntegration.published_after)
         response_data, status_code = make_request(external_service_url=GoogleIntegration.videos_search_base_url,
                                                   request_params=request_params.dict())
         if status_code != 200:

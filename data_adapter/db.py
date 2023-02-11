@@ -38,6 +38,7 @@ DBBase = declarative_base()
 
 
 def get_db():
+    """this function is used to inject db_session dependency in every rest api requests"""
     db: Session = SessionLocal()
     try:
         yield db
@@ -47,8 +48,8 @@ def get_db():
         db.close()
 
 
-# base class for all database objects
 class YTubeBase:
+    """Base class for all db orm models"""
     id = Column(Integer, primary_key=True, unique=True, autoincrement=True)
     external_id = Column(String(255), unique=True)
     created_at = Column(TIMESTAMP(timezone=True), default=time_now, nullable=False)

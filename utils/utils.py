@@ -1,10 +1,9 @@
 import http
-import json
-from typing import Tuple
 
+import requests
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
-import requests
+
 from controller.context_manager import context_api_id, context_log_meta
 from logger import logger
 from models.base import GenericResponseModel
@@ -20,7 +19,7 @@ def build_api_response(generic_response: GenericResponseModel) -> JSONResponse:
         response_json = jsonable_encoder(generic_response)
         res = JSONResponse(status_code=generic_response.status_code, content=response_json)
         logger.info(extra=context_log_meta.get(),
-                    msg=f"build_api_response: Generated Response with status_code:"
+                    msg="build_api_response: Generated Response with status_code:"
                         + f"{generic_response.status_code}")
         return res
     except Exception as e:
