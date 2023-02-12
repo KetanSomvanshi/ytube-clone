@@ -21,7 +21,7 @@ class GoogleYoutubeIntegration:
             max_published_at = max_published_at.isoformat('T')
         request_params = GoogleApiParams(key=api_key, part=GoogleIntegration.part,
                                          order=GoogleIntegration.order,
-                                         type=GoogleIntegration.type, max_results=GoogleIntegration.max_results,
+                                         type=GoogleIntegration.type, maxResults=GoogleIntegration.max_results,
                                          q=GoogleIntegration.query,
                                          publishedAfter=max_published_at)
         response_data, status_code = make_request(external_service_url=GoogleIntegration.videos_search_base_url,

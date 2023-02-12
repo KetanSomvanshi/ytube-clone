@@ -1,4 +1,4 @@
-from controller.context_manager import context_log_meta
+from controller.context_manager import context_log_meta, build_non_request_context
 from logger import logger
 from models.base import GenericResponseModel
 from worker.celery import celery_app, SQLAlchemyTask
@@ -10,6 +10,7 @@ def trigger_yt_video_metadata_sync():
     """ This is a celery task which is triggered by scheduler to sync videos metadata from youtube
     Internally this would call the usecase as usecase has business logic to sync videos metadata from youtube
     command to run worker - 'celery -A worker.task_worker worker -B' """
+    build_non_request_context()
     response: GenericResponseModel = YTubeUseCase().sync_videos_meta_from_external_system()
     if response.errors:
         logger.error(extra=context_log_meta.get(),

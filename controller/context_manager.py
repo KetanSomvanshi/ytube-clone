@@ -11,7 +11,14 @@ from logger import logger
 # does not provide request context out of the box
 context_db_session: ContextVar[Session] = ContextVar('db_session', default=None)
 context_api_id: ContextVar[str] = ContextVar('api_id')
-context_log_meta = ContextVar('log_meta', default={})
+context_log_meta: ContextVar[dict] = ContextVar('log_meta', default={})
+
+
+def clear_context():
+    """method to clear context , to be used by worker"""
+    context_db_session.set(None)
+    context_api_id.set(None)
+    context_log_meta.set({})
 
 
 async def build_request_context(request: Request,
@@ -21,6 +28,14 @@ async def build_request_context(request: Request,
     context_api_id.set(str(uuid.uuid4()))
     context_log_meta.set({'api_id': context_api_id.get(), 'request_id': request.headers.get('X-Request-ID')})
     logger.info(extra={"api_id": context_api_id.get()}, msg="REQUEST_INITIATED")
+
+
+def build_non_request_context():
+    """method to build context for non-request context , to be used by worker"""
+    # clear past context first
+    clear_context()
+    context_api_id.set(str(uuid.uuid4()))
+    context_log_meta.set({'api_id': context_api_id.get()})
 
 
 def get_db_session() -> Session:
