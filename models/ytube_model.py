@@ -57,4 +57,8 @@ class GoogleApiParams(BaseModel):
     publishedAfter: Optional[str] = None
 
     def dict(self, **kwargs):
-        return super().dict(**kwargs, exclude_none=True, exclude_unset=True)
+        return super().dict(**kwargs, exclude_none=True)
+
+
+class AdminKeyInsertModel(BaseModel):
+    api_key: str = None

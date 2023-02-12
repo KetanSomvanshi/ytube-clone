@@ -30,9 +30,12 @@ class GoogleIntegration:
     type = Environment.get_string("GOOGLE_REQUEST_TYPE", "video")
     part = Environment.get_string("GOOGLE_REQUEST_PART", "snippet")
     query = Environment.get_string("GOOGLE_REQUEST_QUERY", "sports")
-    published_after = Environment.get_string("GOOGLE_REQUEST_PUBLISHED_AFTER", "2021-02-01T00:00:00Z")
+    initial_published_after = Environment.get_string("GOOGLE_REQUEST_PUBLISHED_AFTER", "2021-02-01T00:00:00Z")
 
 
 class CELERY:
     broker_uri = Environment.get_string("CELERY_BROKER_URI", "redis://localhost:6379/0")
     task_trigger_in_seconds = Environment.get_int("CELERY_TASK_TRIGGER_IN_SECONDS", 30)
+
+class REDIS:
+    url = Environment.get_string("REDIS_URL", "redis://localhost:6379/1")
