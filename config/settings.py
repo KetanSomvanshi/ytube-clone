@@ -14,11 +14,11 @@ class AUTH:
 
 
 class DB:
-    host = Environment.get_string("DB_HOST", "localhost")
+    host = Environment.get_string("DB_HOST", "postgres_db")
     port = Environment.get_string("DB_PORT", '5432')
-    name = Environment.get_string("DB_NAME", "test")
-    user = Environment.get_string("DB_USER", "")
-    pass_ = Environment.get_string("DB_PASS", "")
+    name = Environment.get_string("DB_NAME", "ytubedb")
+    user = Environment.get_string("DB_USER", "ketansomvanshi")
+    pass_ = Environment.get_string("DB_PASS", "zxcvbnml")
 
 
 class GoogleIntegration:
@@ -34,8 +34,8 @@ class GoogleIntegration:
 
 
 class CELERY:
-    broker_uri = Environment.get_string("CELERY_BROKER_URI", "redis://localhost:6379/0")
+    broker_uri = Environment.get_string("CELERY_BROKER_URI", "redis://redis_server:6379/0")
     task_trigger_in_seconds = Environment.get_int("CELERY_TASK_TRIGGER_IN_SECONDS", 30)
 
 class REDIS:
-    url = Environment.get_string("REDIS_URL", "redis://localhost:6379/1")
+    url = Environment.get_string("REDIS_URL", "redis://redis_server:6379/1")

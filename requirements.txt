@@ -11,3 +11,4 @@ contextvars==2.4
 redis==3.5.3
 celery==5.1.2
 psycopg2==2.8.6
+python-dateutil==2.8.1

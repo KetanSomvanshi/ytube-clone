@@ -1,5 +1,6 @@
 
 -- init script to initialize the database table
+-- this is to be used by docker postgres container
 CREATE TABLE public.ytubemeta (
 	id serial4 NOT NULL,
 	created_at timestamptz NOT NULL,
