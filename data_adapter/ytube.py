@@ -48,6 +48,9 @@ class YTubeVideoMeta(DBBase, YTubeBase):
         from controller.context_manager import get_db_session
         db: Session = get_db_session()
         query = db.query(cls).filter(cls.is_deleted.is_(False))
+        # ts_query is a postgres function which converts a string to text search query
+        #  we are using this function to convert search_term to ts_query
+        # @@ is a postgres operator which is used to match ts_query with tsvector column
         query = query.filter(cls.search_data.op("@@")(func.plainto_tsquery(search_term))).limit(
             paginator.page_size).offset(paginator.page_size * paginator.page)
         return [obj.__to_model() for obj in query.all()]
