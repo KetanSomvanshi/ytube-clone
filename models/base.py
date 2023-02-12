@@ -29,6 +29,9 @@ class DBBaseModel(BaseModel):
 
 class PaginationRequest(BaseModel):
     """Basic Pagination request model , can be reused for any pagination request"""
+    """Pagination request model alternatively provides last_timestamp as well which can be used by clients
+    in fast moving data , using page number as offset might not be a good idea as data might have changed after 
+    last fetch , so we can use last_timestamp to fetch data after that timestamp provided by client"""
     page: Optional[int] = 0
     page_size: Optional[int] = 20
     last_timestamp: Optional[datetime] = None

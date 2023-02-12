@@ -82,3 +82,12 @@ class Cache:
         except Exception as e:
             logger.error(msg=f"error in redis srandmember : {e}")
             return None
+
+    def increment(self, key: str, amount=1) -> int:
+        try:
+            if not self.__validate(key=key):
+                return 0
+            return self._redis.incr(key, amount)
+        except Exception as e:
+            logger.error(msg=f"error in redis increment : {e}")
+            return 0

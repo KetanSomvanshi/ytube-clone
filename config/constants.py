@@ -5,3 +5,4 @@ class CacheKeys:
     EXPIRY = 10 * 60  # 10 minutes
     LOCK_FOR_EXTERNAL_SYNC = "LFES"
     YOUTUBE_API_KEY = "YAPI"
+    TOTAL_DATA_COUNT = "TDC"

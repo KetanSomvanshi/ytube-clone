@@ -28,11 +28,16 @@ class YTubeVideoMeta(DBBase, YTubeBase):
 
     @classmethod
     def list_ytube_videos_meta(cls, paginator: PaginationRequest) -> List[YTubeVideoMetaModel]:
+        """if paginator is providing last_epoch then we would use that to fetch data after that timestamp"""
         from controller.context_manager import get_db_session
         db: Session = get_db_session()
         query = db.query(cls).filter(cls.is_deleted.is_(False))
-        query = query.order_by(desc(cls.created_at)).limit(paginator.page_size).offset(
-            paginator.page_size * paginator.page)
+        query = query.order_by(desc(cls.published_at))
+        if paginator.last_timestamp:
+            query = query.filter(cls.published_at < paginator.last_timestamp)
+        else:
+            query = query.offset(paginator.page * paginator.page_size)
+        query = query.limit(paginator.page_size)
         return [obj.__to_model() for obj in query.all()]
 
     @classmethod
@@ -44,16 +49,21 @@ class YTubeVideoMeta(DBBase, YTubeBase):
 
     @classmethod
     def search_videos_meta_by_search_term(cls, search_term: str, paginator: PaginationRequest) -> \
-            List[YTubeVideoMetaModel]:
+            (List[YTubeVideoMetaModel], int):
         from controller.context_manager import get_db_session
         db: Session = get_db_session()
         query = db.query(cls).filter(cls.is_deleted.is_(False))
         # ts_query is a postgres function which converts a string to text search query
         #  we are using this function to convert search_term to ts_query
         # @@ is a postgres operator which is used to match ts_query with tsvector column
-        query = query.filter(cls.search_data.op("@@")(func.plainto_tsquery(search_term))).limit(
-            paginator.page_size).offset(paginator.page_size * paginator.page)
-        return [obj.__to_model() for obj in query.all()]
+        query = query.filter(cls.search_data.op("@@")(func.plainto_tsquery(search_term)))
+        total_count = query.count()
+        if paginator.last_timestamp:
+            query = query.filter(cls.published_at < paginator.last_timestamp)
+        else:
+            query = query.offset(paginator.page * paginator.page_size)
+        query = query.limit(paginator.page_size)
+        return [obj.__to_model() for obj in query.all()], total_count
 
     @classmethod
     def get_max_published_at(cls) -> str:
@@ -66,3 +76,9 @@ class YTubeVideoMeta(DBBase, YTubeBase):
         from controller.context_manager import get_db_session
         db: Session = get_db_session()
         return db.query(func.min(cls.published_at)).scalar()
+
+    @classmethod
+    def get_total_count(cls) -> int:
+        from controller.context_manager import get_db_session
+        db: Session = get_db_session()
+        return db.query(func.count(cls.id)).scalar()

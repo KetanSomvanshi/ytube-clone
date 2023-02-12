@@ -26,10 +26,11 @@ class YTubeUseCase:
         logger.info(extra=context_log_meta.get(), msg=f"get_videos_metadata: paginator: {paginator}")
         list_data = YTubeVideoMeta.list_ytube_videos_meta(paginator=paginator)
         response_data = YTubeGetResponseModel(data=list_data, pagination_data=paginator)
+        response_data.pagination_data.total_count = YTubeUseCase.get_total_data_count()
         if not response_data:
             logger.error(extra=context_log_meta.get(), msg=YTubeUseCase.ERROR_GET_VIDEOS_META)
             return GenericResponseModel(status_code=404, errors=YTubeUseCase.ERROR_GET_VIDEOS_META)
-        return GenericResponseModel(data=list_data, message=YTubeUseCase.MSG_GET_VIDEOS_META_SUCCESS)
+        return GenericResponseModel(data=response_data, message=YTubeUseCase.MSG_GET_VIDEOS_META_SUCCESS)
 
     @staticmethod
     def sync_videos_meta_from_external_system() -> GenericResponseModel:
@@ -65,6 +66,8 @@ class YTubeUseCase:
                                 f" and min_published_at: {min_published_at}")
                 return GenericResponseModel(message="No new videos found from youtube")
             YTubeVideoMeta.insert_all(items=models_from_external_system)
+            # increment total count in redis
+            Cache.get_instance().increment(CacheKeys.TOTAL_DATA_COUNT, len(models_from_external_system))
             max_published_at = max(models_from_external_system[0].published_at, max_published_at)
             # to make sure redis cache is not filled with old data we should keep expiring the cache
             # after expired time we would fetch data from db and update the cache
@@ -92,6 +95,9 @@ class YTubeUseCase:
             if not max_published_at:
                 # if we do not have any max_published_at timestamp in db we would set it to initial_published_after
                 max_published_at = GoogleIntegration.initial_published_after
+            else:
+                Cache.get_instance().set(key=CacheKeys.MAX_PUBLISH_AT, value=max_published_at.isoformat('T'),
+                                         expiry_in_seconds=CacheKeys.EXPIRY)
         min_published_at = Cache.get_instance().get(key=CacheKeys.MIN_PUBLISH_AT)
         if not min_published_at:
             # if we do not have any min_published_at timestamp in redis we would get it form db
@@ -99,6 +105,9 @@ class YTubeUseCase:
             if not min_published_at:
                 # if we do not have any min_published_at timestamp in db we would set it to now
                 min_published_at = datetime.now(timezone.utc)
+            else:
+                Cache.get_instance().set(key=CacheKeys.MIN_PUBLISH_AT, value=min_published_at.isoformat('T'),
+                                         expiry_in_seconds=CacheKeys.EXPIRY)
         if isinstance(max_published_at, str):
             max_published_at: datetime = parser.parse(max_published_at)
         if isinstance(min_published_at, str):
@@ -106,11 +115,21 @@ class YTubeUseCase:
         return max_published_at, min_published_at
 
     @staticmethod
+    def get_total_data_count() -> int:
+        count = Cache.get_instance().get(key=CacheKeys.TOTAL_DATA_COUNT)
+        if not count:
+            count = YTubeVideoMeta.get_total_count()
+            Cache.get_instance().set(key=CacheKeys.TOTAL_DATA_COUNT, value=count, expiry_in_seconds=CacheKeys.EXPIRY)
+        return count
+
+    @staticmethod
     def search_videos_meta_by_search_term(search_term: str, paginator: PaginationRequest) -> GenericResponseModel:
         logger.info(extra=context_log_meta.get(), msg=f"search_videos_meta_by_search_term: search_term: {search_term}")
-        list_data = YTubeVideoMeta.search_videos_meta_by_search_term(search_term=search_term, paginator=paginator)
+        list_data, total_count = YTubeVideoMeta.search_videos_meta_by_search_term(search_term=search_term,
+                                                                                  paginator=paginator)
         response_data = YTubeGetResponseModel(data=list_data, pagination_data=paginator)
+        response_data.pagination_data.total_count = total_count
         if not response_data:
             logger.error(extra=context_log_meta.get(), msg=YTubeUseCase.ERROR_GET_VIDEOS_META)
             return GenericResponseModel(status_code=404, errors=YTubeUseCase.ERROR_GET_VIDEOS_META)
-        return GenericResponseModel(data=list_data, message=YTubeUseCase.MSG_GET_VIDEOS_META_SUCCESS)
+        return GenericResponseModel(data=response_data, message=YTubeUseCase.MSG_GET_VIDEOS_META_SUCCESS)
