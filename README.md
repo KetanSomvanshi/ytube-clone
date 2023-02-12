@@ -5,7 +5,7 @@ Foobar is a Python library for dealing with word pluralization.
 ## Running the application
 A complete application is dockerized and docker-compose can be used to run the application.
 To handle environment variables config/.env file needs to be created. config/env.sample provided for reference.
-API Documentation
+If you create config/.env file by copying config/env.sample, you just need to update api_key
 ```bash
 cd docker && docker compose up
 ```
