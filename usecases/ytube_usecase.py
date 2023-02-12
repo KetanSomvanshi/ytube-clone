@@ -37,3 +37,14 @@ class YTubeUseCase:
             return GenericResponseModel(status_code=500, errors=str(e))
         logger.debug(extra=context_log_meta.get(),
                      msg=f"Successfully synced videos metadata from youtube: {response.data}")
+        return GenericResponseModel(data=response.data, message="Successfully synced videos metadata from youtube")
+
+    @staticmethod
+    def search_videos_meta_by_search_term(search_term: str, paginator: PaginationRequest) -> GenericResponseModel:
+        logger.info(extra=context_log_meta.get(), msg=f"search_videos_meta_by_search_term: search_term: {search_term}")
+        list_data = YTubeVideoMeta.search_videos_meta_by_search_term(search_term=search_term, paginator=paginator)
+        response_data = YTubeGetResponseModel(data=list_data, pagination_data=paginator)
+        if not response_data:
+            logger.error(extra=context_log_meta.get(), msg=YTubeUseCase.ERROR_GET_VIDEOS_META)
+            return GenericResponseModel(status_code=404, errors=YTubeUseCase.ERROR_GET_VIDEOS_META)
+        return GenericResponseModel(data=list_data, message=YTubeUseCase.MSG_GET_VIDEOS_META_SUCCESS)

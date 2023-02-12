@@ -1,7 +1,7 @@
 from typing import List
 
-from sqlalchemy import Column, String, TIMESTAMP, Text, desc
-from sqlalchemy.dialects.postgresql import JSON
+from sqlalchemy import Column, String, TIMESTAMP, Text, desc, func
+from sqlalchemy.dialects.postgresql import JSON, TSVECTOR
 from sqlalchemy.orm import Session
 
 from data_adapter.db import YTubeBase, DBBase
@@ -18,6 +18,9 @@ class YTubeVideoMeta(DBBase, YTubeBase):
     published_at = Column(TIMESTAMP(timezone=True), nullable=False)
     channel_id = Column(String(255), nullable=True)
     channel_title = Column(String, nullable=True)
+    # search_data is postgres tsvector column which is used for full text search
+    #  we have a gin index on this column for faster search
+    search_data = Column(TSVECTOR, nullable=True)
 
     def __to_model(self) -> YTubeVideoMetaModel:
         """converts db orm object to pydantic model"""
@@ -38,3 +41,13 @@ class YTubeVideoMeta(DBBase, YTubeBase):
         db: Session = get_db_session()
         db.bulk_save_objects([obj.build_db_model() for obj in items])
         db.flush()
+
+    @classmethod
+    def search_videos_meta_by_search_term(cls, search_term: str, paginator: PaginationRequest) -> \
+            List[YTubeVideoMetaModel]:
+        from controller.context_manager import get_db_session
+        db: Session = get_db_session()
+        query = db.query(cls).filter(cls.is_deleted.is_(False))
+        query = query.filter(cls.search_data.op("@@")(func.plainto_tsquery(search_term))).limit(
+            paginator.page_size).offset(paginator.page_size * paginator.page)
+        return [obj.__to_model() for obj in query.all()]
