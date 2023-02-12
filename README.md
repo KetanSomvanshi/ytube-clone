@@ -28,4 +28,4 @@ Postgres DB is holding YTVideoMeta data in a table. Postgres DB can be sharded b
 Plain text search is also implemented over postgres DB using a combination of ts_vector,ts_query, and GIN indexing. However for better performance ElasticSearch like search db can be used.
 
 ## Design Diagram
-![](../../Desktop/Screenshot 2023-02-12 at 22.53.15.png)
+![Screenshot 2023-02-12 at 22 53 15](https://user-images.githubusercontent.com/81796188/218327606-ce6a6e60-78f8-46f1-af04-29ddcf949013.png)
