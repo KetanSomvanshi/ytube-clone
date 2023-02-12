@@ -17,6 +17,7 @@ cd docker && docker compose up
 4. Admin APIs to add or delete google API keys when the quota is over. If multiple keys are provided randomly any key would be used per request. If no key is provided default key will be used. - Bonus feature.
 
 [API Documentation](https://documenter.getpostman.com/view/15455073/2s935uGLgU)
+PS : All apis are protected by basic authentication. Username and password can be configured in config/.env file.
 
 ## Design Components
 ### Celery Scheduler and Worker
