@@ -1,12 +1,11 @@
 import http
 
-from fastapi import APIRouter, Depends, Query, Path
+from fastapi import APIRouter, Depends, Path
 
 from controller.context_manager import build_request_context
-from models.base import GenericResponseModel, PaginationRequest
+from models.base import GenericResponseModel
 from models.ytube_model import AdminKeyInsertModel
 from usecases.admin_usecase import AdminUseCase
-from usecases.ytube_usecase import YTubeUseCase
 from utils.utils import build_api_response
 
 admin_router = APIRouter(prefix="/v1/admin", tags=["admin_router", "admin"])

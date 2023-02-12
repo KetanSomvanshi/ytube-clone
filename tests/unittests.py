@@ -9,7 +9,6 @@ from logger import logger
 from models.base import PaginationRequest, GenericResponseModel
 from usecases.admin_usecase import AdminUseCase
 from usecases.ytube_usecase import YTubeUseCase
-from utils.utils import ApiLockManager
 
 
 class TestYTubeUseCase(unittest.TestCase):

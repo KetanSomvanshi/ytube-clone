@@ -1,18 +1,7 @@
-from datetime import datetime, timezone
-from typing import List
-
 from config.constants import CacheKeys
 from config.settings import GoogleIntegration
-from controller.context_manager import context_log_meta, context_api_id
 from data_adapter.redis import Cache
-from data_adapter.ytube import YTubeVideoMeta
-from integrations.google_api_integration import GoogleYoutubeIntegration
-from logger import logger
-from models.base import PaginationRequest, GenericResponseModel
-from models.ytube_model import YTubeGetResponseModel, YTubeVideoInsertModel
-from dateutil import parser
-
-from utils.utils import ApiLockManager
+from models.base import GenericResponseModel
 
 
 class AdminUseCase:

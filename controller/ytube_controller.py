@@ -23,8 +23,8 @@ async def get_videos_metadata(_=Depends(build_request_context), paginator: Pagin
 
 
 @video_router.get("/search", status_code=http.HTTPStatus.OK)
-async def get_videos_metadata(_=Depends(build_request_context), paginator: PaginationRequest = Depends(),
-                              search_term: str = Query(...)):
+async def search_videos_metadata(_=Depends(build_request_context), paginator: PaginationRequest = Depends(),
+                                 search_term: str = Query(...)):
     """
     Get videos metadata in paginated format
     :param _: build_request_context dependency injection handles the request context
